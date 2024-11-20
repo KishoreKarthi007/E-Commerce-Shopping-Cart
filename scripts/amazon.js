@@ -2,7 +2,6 @@ import { cart } from "../data/cart.js";
 import { products } from "../data/products.js";
 
 let productHTML=``;
-
 products.forEach( product => {
     const html=`
         <div class="product-container">
@@ -56,26 +55,19 @@ products.forEach( product => {
     `;
     productHTML+=html;
 });
-
 document.querySelector(".js-product-data")
     .innerHTML=productHTML;
 
-let quantityCount=0;
-let productQuantity=0;
-document.querySelectorAll(".js-add-to-cart")
-    .forEach(button => {
-        button.addEventListener('click',()=>{
-            const productId=button.dataset.productId;
-            const quantitySelect=document.querySelector(`.js-product-quantity-${productId}`);
-            const addedToCart=document.querySelector(`.js-added-to-cart-${productId}`);
-            const quantity=Number(quantitySelect.value);
-            let matchingItem;
-
+function addedToCart(productId){
+  const addedToCart=document.querySelector(`.js-added-to-cart-${productId}`);
             addedToCart.style.opacity=100;
             setTimeout(()=>{
               addedToCart.style.opacity=0;
             },2000);
+};
 
+function addToCart(productId,quantity) {
+  let matchingItem;
             cart.forEach( item => {
                 if(item.id === productId)
                     matchingItem=item;
@@ -89,15 +81,31 @@ document.querySelectorAll(".js-add-to-cart")
                     quantity:quantity
                 });
             }
+};
 
-            quantityCount+=quantity;
-            document.querySelector(".js-cart-quantity")
-              .innerHTML=quantityCount;
-            
-            
+function countQuantity(quantity) {
+  quantityCount+=quantity;
+  document.querySelector(".js-cart-quantity")
+    .innerHTML=quantityCount;
+}
+
+let quantityCount=0;
+let productQuantity=0;
+document.querySelectorAll(".js-add-to-cart")
+    .forEach(button => {
+        button.addEventListener('click',()=>{
+            const productId=button.dataset.productId;
+            const quantitySelect=document.querySelector(`.js-product-quantity-${productId}`);
+            const quantity=Number(quantitySelect.value);
+
+            addedToCart(productId);
+            addToCart(productId,quantity);
+            countQuantity(quantity);
             
         });        
     });
+
+
 
 
 
