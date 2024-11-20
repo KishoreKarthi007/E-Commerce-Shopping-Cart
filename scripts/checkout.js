@@ -1,5 +1,6 @@
-import { cart } from "../data/cart.js";
+import { cart, removeFromCart } from "../data/cart.js";
 import { products } from "../data/products.js";
+import { quantityCount } from "./amazon.js";
 
 let cartSummaryHTML=``;
 cart.forEach((cartItem)=>{
@@ -12,7 +13,7 @@ cart.forEach((cartItem)=>{
     });
     
     cartSummaryHTML+= `
-    <div class="cart-item-container">
+    <div class="cart-item-container js-cart-item-container-${matchingItem.id}" >
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
@@ -30,12 +31,12 @@ cart.forEach((cartItem)=>{
                 </div>
                 <div class="product-quantity">
                   <span>
-                    Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+                    Quantity: <span class="quantity-label js-quantity-update">${cartItem.quantity}</span>
                   </span>
                   <span class="update-quantity-link link-primary">
                     Update
                   </span>
-                  <span class="delete-quantity-link link-primary">
+                  <span class="delete-quantity-link link-primary js-delete-quantity" data-delete-id="${matchingItem.id}">
                     Delete
                   </span>
                 </div>
@@ -91,8 +92,29 @@ cart.forEach((cartItem)=>{
     
     document.querySelector(".js-order-summary")
         .innerHTML=cartSummaryHTML;
-
-    
 });
+
+document.querySelectorAll(".js-delete-quantity")
+    .forEach(button=>{
+        button.addEventListener("click",()=>{
+            const deleteId=button.dataset.deleteId;
+            cart.forEach(cartItem => {
+                if(deleteId === cartItem.productId){
+                    if(cartItem.quantity > 1){
+                        cartItem.quantity-=1; 
+                        document.querySelector(".js-quantity-update")
+                        .innerHTML=cartItem.quantity;
+                    }
+                    else{
+                        removeFromCart(deleteId); 
+                        document.querySelector(`.js-cart-item-container-${deleteId}`).remove();
+                    }
+                };                                              
+            });
+
+
+            
+        });
+    });
 
 

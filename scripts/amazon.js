@@ -72,7 +72,7 @@ function updateQuantity(quantity) {
     .innerHTML=quantityCount;
 }
 
-let quantityCount=0;
+export let quantityCount=0;
 let productQuantity=0;
 document.querySelectorAll(".js-add-to-cart")
     .forEach(button => {
