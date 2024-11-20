@@ -41,7 +41,7 @@ products.forEach( product => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added-to-cart-${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -64,9 +64,15 @@ document.querySelectorAll(".js-add-to-cart")
         button.addEventListener('click',()=>{
             const productId=button.dataset.productId;
             const quantitySelect=document.querySelector(`.js-product-quantity-${productId}`);
+            const addedToCart=document.querySelector(`.js-added-to-cart-${productId}`);
             const quantity=Number(quantitySelect.value);
             let matchingItem;
-            
+
+            addedToCart.style.opacity=100;
+            setTimeout(()=>{
+              addedToCart.style.opacity=0;
+            },2000);
+
             cart.forEach( item => {
                 if(item.id === productId)
                     matchingItem=item;
@@ -84,6 +90,8 @@ document.querySelectorAll(".js-add-to-cart")
             quantityCount+=quantity;
             document.querySelector(".js-cart-quantity")
               .innerHTML=quantityCount;
+            
+            
             
         });        
     });
