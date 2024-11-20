@@ -1,6 +1,5 @@
 import { cart, removeFromCart } from "../data/cart.js";
 import { products } from "../data/products.js";
-import { quantityCount } from "./amazon.js";
 
 let cartSummaryHTML=``;
 cart.forEach((cartItem)=>{
