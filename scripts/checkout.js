@@ -39,7 +39,7 @@ function orderSummary(totalItemPrice,shippingCharge){
   let totalTax=0;
   let totalAfterTax=0;
   totalBeforeTax=totalItemPrice+shippingCharge;
-  totalTax=Number(totalBeforeTax*(1/100)).toFixed(2);
+  totalTax=Number((totalBeforeTax*(1/100)).toFixed(2));
   totalAfterTax=totalBeforeTax + totalTax;
   document.querySelector(".js-total-items-price").innerHTML="₹"+totalItemPrice;
   document.querySelector(".js-total-shipping-price").innerHTML="₹"+shippingCharge;
@@ -62,7 +62,7 @@ cart.forEach((cartItem)=>{
     cartSummaryHTML+= `
     <div class="cart-item-container js-cart-item-container-${matchingItem.id}" >
             <div class="delivery-date">
-              Delivery date: Tuesday, June 21
+              Delivery date: <span class="js-delivery-date-${matchingItem.id}">Tuesday, June 21</span>
             </div>
 
             <div class="cart-item-details-grid">
@@ -133,7 +133,7 @@ function deliveryHTML(cartItem,productId){
               value="${deliveryItem.deliveryId}"
               >
             <div>
-              <div class="delivery-option-date">
+              <div class="delivery-option-date js-delivery-string-${deliveryItem.deliveryId}">
                 ${deliveryString}
               </div>
               <div class="delivery-option-price">
@@ -152,8 +152,11 @@ cart.forEach(cartItem => {
   document.getElementsByName(`delivery-option-${cartItem.productId}`)
     .forEach(option =>{
       option.addEventListener('change',()=>{
+        let deliveryString=document.querySelector(`.js-delivery-string-${cartItem.deliveryId}`).innerText;
+        document.querySelector(`.js-delivery-date-${cartItem.productId}`).innerText=deliveryString;
         cartItem.deliveryId=option.value;
         orderSummary(totalItemPrice(),shippingChargeFind());
+        
       });  
   });
 });

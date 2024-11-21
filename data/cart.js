@@ -25,9 +25,9 @@ function saveToStorage(){
 //Function --> Add the product to the cart
 function addToCart(productId,quantity) {
     let matchingItem;
-    cart.forEach( item => {
-        if(item.id === productId)
-            matchingItem=item;
+    cart.forEach( cartItem => {
+        if(cartItem.productId === productId)
+            matchingItem=cartItem;
     });
 
     if(matchingItem){ 
@@ -43,6 +43,7 @@ function addToCart(productId,quantity) {
     saveToStorage();
 };
 
+//Function --> Remove the product to the cart
 function removeFromCart(productId) {
     const newCart=[];
 
@@ -56,7 +57,7 @@ function removeFromCart(productId) {
     saveToStorage();
 }
 
-//Function --> Remove the product to the cart
+//Function --> Total product in the cart
 function totalItems(){
     let totalItems=0;
     cart.forEach(cartItem => {
@@ -66,6 +67,8 @@ function totalItems(){
         .innerHTML=totalItems + " Items";
     document.querySelector(".js-payment-summary-item")
         .innerHTML="Items (" + totalItems +"):";  
+    
+    saveToStorage();
 }
 
 //Function --> Update quantity of product in the cart
@@ -75,6 +78,8 @@ function updateCartQuantity(id,value){
             cartItem.quantity=value;
     });
     totalItems();
+
+    saveToStorage();
 }
 
 export {cart, addToCart, removeFromCart, totalItems,updateCartQuantity};

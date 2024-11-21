@@ -84,11 +84,9 @@ document.querySelectorAll(".js-add-to-cart")
             const productId=button.dataset.productId;
             const quantitySelect=document.querySelector(`.js-product-quantity-${productId}`);
             const quantity=Number(quantitySelect.value);
-
-            addedToCart(productId);
+            addedToCart(productId);            
             addToCart(productId,quantity);
             updateQuantity(quantity);
-
         });        
     });
 
