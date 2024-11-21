@@ -213,7 +213,7 @@ document.querySelectorAll(".js-update-quantity")
         });
 });
 
-
+totalItems();
 orderSummary(totalItemPrice(),0);
 
 
