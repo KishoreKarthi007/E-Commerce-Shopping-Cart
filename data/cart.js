@@ -1,5 +1,7 @@
+//Save Data to Local Storage
 let cart= JSON.parse(localStorage.getItem('cart'));
 
+//Empty Cart Handling using default cart
 if(!cart) {
     cart=[
         {
@@ -15,10 +17,12 @@ if(!cart) {
     ];
 }
 
+//Function --> set localstorage for the cart
 function saveToStorage(){
     localStorage.setItem('cart',JSON.stringify(cart));
 }
 
+//Function --> Add the product to the cart
 function addToCart(productId,quantity) {
     let matchingItem;
     cart.forEach( item => {
@@ -52,22 +56,25 @@ function removeFromCart(productId) {
     saveToStorage();
 }
 
+//Function --> Remove the product to the cart
 function totalItems(){
     let totalItems=0;
     cart.forEach(cartItem => {
-      totalItems+=cartItem.quantity;
+        totalItems+=cartItem.quantity;
     });
-    document.querySelector(".js-total-items").innerHTML=totalItems + " Items";
-  }
+    document.querySelector(".js-total-items")
+        .innerHTML=totalItems + " Items";
+    document.querySelector(".js-payment-summary-item")
+        .innerHTML="Items (" + totalItems +"):";  
+}
 
-
+//Function --> Update quantity of product in the cart
 function updateCartQuantity(id,value){
     cart.forEach((cartItem)=>{
         if(cartItem.productId === id)
             cartItem.quantity=value;
     });
-
-    
+    totalItems();
 }
 
 export {cart, addToCart, removeFromCart, totalItems,updateCartQuantity};

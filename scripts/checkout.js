@@ -1,12 +1,55 @@
 import { cart, removeFromCart, totalItems, updateCartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
-import { deliveryOptions } from "../data/";
+import { deliveryOptions } from "../data/deliveryOption.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
 
+
+//Function --> finding the overall shipping charges from the cart 
+function shippingChargeFind() {
+  let shippingCharge=0;
+  cart.forEach(cartItem =>{
+      deliveryOptions.forEach( deliveryItem =>{
+        if(deliveryItem.deliveryId === cartItem.deliveryId)
+            shippingCharge+=deliveryItem.deliveryPrice; 
+      });  
+  });
+  return shippingCharge;
+}
+
+//Function --> finding the total quantities of all the items present in the cart
+function totalItemPrice(){
+let totalItemPrice=0;
+cart.forEach((cartItem)=>{
+const productId=cartItem.productId;
+const productQuantity=cartItem.quantity;
+let matchingItem;
+products.forEach( productItem =>{
+  if(productId === productItem.id)
+      matchingItem=productItem;
+});
+
+totalItemPrice+=productQuantity*matchingItem.price;
+});
+return totalItemPrice;
+}
+
+//Function --> Order Summary Price Details
+function orderSummary(totalItemPrice,shippingCharge){
+  let totalBeforeTax=0;
+  let totalTax=0;
+  let totalAfterTax=0;
+  totalBeforeTax=totalItemPrice+shippingCharge;
+  totalTax=Number(totalBeforeTax*(1/100)).toFixed(2);
+  totalAfterTax=totalBeforeTax + totalTax;
+  document.querySelector(".js-total-items-price").innerHTML="₹"+totalItemPrice;
+  document.querySelector(".js-total-shipping-price").innerHTML="₹"+shippingCharge;
+  document.querySelector(".js-total-before-tax-price").innerHTML="₹"+totalBeforeTax;
+  document.querySelector(".js-total-tax-price").innerHTML="₹"+totalTax;
+  document.querySelector(".js-total-after-tax-price").innerHTML="₹"+totalAfterTax;
+}
+
+//Generating the Cart Summary HTML
 let cartSummaryHTML=``;
-
-
-
 cart.forEach((cartItem)=>{
     const productId=cartItem.productId;
     let matchingItem;
@@ -15,61 +58,7 @@ cart.forEach((cartItem)=>{
         if(productId === productItem.id)
             matchingItem=productItem;
     });
-    function deliveryHTML(id){
-      const today=dayjs();
-      const deliveryDate=today.add(7,'days');
-      const deliveryString=deliveryDate.format('dddd, MMMM DD');
-      
-   
-
-      let html= 
-      `
-      <div class="delivery-options">
-                <div class="delivery-options-title">
-                  Choose a delivery option:
-                </div>
-                <div class="delivery-option">
-                  <input type="radio" checked
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Tuesday, June 21
-                    </div>
-                    <div class="delivery-option-price">
-                      FREE Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Wednesday, June 15
-                    </div>
-                    <div class="delivery-option-price">
-                      <sup>₹</sup>4.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Monday, June 13
-                    </div>
-                    <div class="delivery-option-price">
-                      <sup>₹</sup>9.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-              </div>
-      `
-    }
+    
     cartSummaryHTML+= `
     <div class="cart-item-container js-cart-item-container-${matchingItem.id}" >
             <div class="delivery-date">
@@ -112,45 +101,7 @@ cart.forEach((cartItem)=>{
                 <div class="delivery-options-title">
                   Choose a delivery option:
                 </div>
-                <div class="delivery-option">
-                  <input type="radio" checked
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Tuesday, June 21
-                    </div>
-                    <div class="delivery-option-price">
-                      FREE Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Wednesday, June 15
-                    </div>
-                    <div class="delivery-option-price">
-                      <sup>₹</sup>4.99 - Shipping
-                    </div>
-                  </div>
-                </div>
-                <div class="delivery-option">
-                  <input type="radio"
-                    class="delivery-option-input"
-                    name="delivery-option-${matchingItem.id}">
-                  <div>
-                    <div class="delivery-option-date">
-                      Monday, June 13
-                    </div>
-                    <div class="delivery-option-price">
-                      <sup>₹</sup>9.99 - Shipping
-                    </div>
-                  </div>
-                </div>
+                ${deliveryHTML(cartItem,matchingItem.id)}
               </div>
             </div>
           </div>
@@ -160,6 +111,54 @@ cart.forEach((cartItem)=>{
         .innerHTML=cartSummaryHTML;
 });
 
+//Generating the Delivery Options HTML
+function deliveryHTML(cartItem,productId){  
+  let deliveryHTML= ``;
+  deliveryOptions.forEach((deliveryItem)=>{
+    const today=dayjs();
+    const deliveryDate=today.add(deliveryItem.deliveryDays,'days');
+    const deliveryString=deliveryDate.format('dddd, MMMM DD');
+    const deliveryPrice = (deliveryItem.deliveryPrice === 0) ?
+                          "FREE" : deliveryItem.deliveryPrice;  
+      
+    const isChecked= (deliveryItem.deliveryId === cartItem.deliveryId) ? 1:0;
+                      
+
+    deliveryHTML+=
+    `
+      <div class="delivery-option">
+            <input type="radio" ${isChecked ? 'checked':''}
+              class="delivery-option-input"
+              name="delivery-option-${productId}"
+              value="${deliveryItem.deliveryId}"
+              >
+            <div>
+              <div class="delivery-option-date">
+                ${deliveryString}
+              </div>
+              <div class="delivery-option-price">
+                <sup>₹</sup>${deliveryPrice} Shipping
+              </div>
+            </div>
+          </div>
+    `;
+});
+
+  return deliveryHTML;
+}
+
+//Interactive Delivery Options
+cart.forEach(cartItem => {
+  document.getElementsByName(`delivery-option-${cartItem.productId}`)
+    .forEach(option =>{
+      option.addEventListener('change',()=>{
+        cartItem.deliveryId=option.value;
+        orderSummary(totalItemPrice(),shippingChargeFind());
+      });  
+  });
+});
+
+//Interactive Delete Link Cart Summary
 document.querySelectorAll(".js-delete-quantity")
     .forEach(button=>{
         button.addEventListener("click",()=>{
@@ -176,12 +175,13 @@ document.querySelectorAll(".js-delete-quantity")
                         document.querySelector(`.js-cart-item-container-${deleteId}`).remove();
                     }
                     totalItems();
+                    orderSummary(totalItemPrice(),shippingChargeFind());
                 };                                              
             });
         });
     });
-    totalItems();
-  
+
+//Interactive Update Link Cart Summary
 document.querySelectorAll(".js-update-quantity")
     .forEach(button=>{
         button.addEventListener("click",()=>{
@@ -200,7 +200,6 @@ document.querySelectorAll(".js-update-quantity")
               .addEventListener('click', (x)=>{
                 let inputValue=Number(document.querySelector(`.js-quantity-input-${updateId}`).value);
                 updateCartQuantity(updateId,inputValue);
-                console.log(cart);
                 containerEdit.classList.remove("show");
                 containerEdit.classList.add("hide");
                 containerUpdate.classList.remove("hide");
@@ -209,7 +208,14 @@ document.querySelectorAll(".js-update-quantity")
                   .innerHTML=inputValue;
                 containerUpdate.classList.remove("show");
                 containerEdit.classList.remove("hide");
+                orderSummary(totalItemPrice(),shippingChargeFind());
               }); 
         });
-    })
-  
+});
+
+
+orderSummary(totalItemPrice(),0);
+
+
+
+
