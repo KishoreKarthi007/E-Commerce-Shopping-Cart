@@ -1,6 +1,7 @@
-import { cart, removeFromCart, totalItems, updateCartQuantity } from "../data/cart.js";
+import { cart, removeFromCart, totalItems, updateCartQuantity,emptyCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { deliveryOptions } from "../data/deliveryOption.js";
+import {order,addToOrder} from "../data/order.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
 
 
@@ -46,6 +47,7 @@ function orderSummary(totalItemPrice,shippingCharge){
   document.querySelector(".js-total-before-tax-price").innerHTML="₹"+totalBeforeTax;
   document.querySelector(".js-total-tax-price").innerHTML="₹"+totalTax;
   document.querySelector(".js-total-after-tax-price").innerHTML="₹"+totalAfterTax;
+  return totalAfterTax;
 }
 
 //Generating the Cart Summary HTML
@@ -133,7 +135,7 @@ function deliveryHTML(cartItem,productId){
               value="${deliveryItem.deliveryId}"
               >
             <div>
-              <div class="delivery-option-date js-delivery-string-${deliveryItem.deliveryId}">
+              <div class="delivery-option-date js-delivery-string-${deliveryItem.deliveryId} js-delivery-option-${productId}">
                 ${deliveryString}
               </div>
               <div class="delivery-option-price">
@@ -152,9 +154,9 @@ cart.forEach(cartItem => {
   document.getElementsByName(`delivery-option-${cartItem.productId}`)
     .forEach(option =>{
       option.addEventListener('change',()=>{
+        cartItem.deliveryId=option.value;
         let deliveryString=document.querySelector(`.js-delivery-string-${cartItem.deliveryId}`).innerText;
         document.querySelector(`.js-delivery-date-${cartItem.productId}`).innerText=deliveryString;
-        cartItem.deliveryId=option.value;
         orderSummary(totalItemPrice(),shippingChargeFind());
         
       });  
@@ -219,6 +221,30 @@ document.querySelectorAll(".js-update-quantity")
 totalItems();
 orderSummary(totalItemPrice(),0);
 
+//Interactive Place Order Button
+document.querySelector(".js-place-order-button")
+  .addEventListener('click',() => {
+
+    if(cart){
+      let productPush=[];
+      cart.forEach( cartItem =>{
+        const product=cartItem; 
+        product.orderArrivalDate=document.querySelector(`.js-delivery-string-${cartItem.deliveryId}`).innerText;
+        productPush.push(product);
+      });
+      addToOrder( productPush,
+        document.querySelector(".js-total-after-tax-price").innerText
+      );
+      emptyCart();
+      const placedOrder=`
+        <h2>Order Placed Check the Order Page</h2>
+        <a href="orders.html "><button>Go To Order Page</button></a>
+      `
+      document.querySelector(".js-order-summary")
+      .innerHTML=placedOrder;
+    }
+    
+});
 
 
 

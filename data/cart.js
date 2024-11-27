@@ -82,4 +82,12 @@ function updateCartQuantity(id,value){
     saveToStorage();
 }
 
-export {cart, addToCart, removeFromCart, totalItems,updateCartQuantity};
+//Function -->Empty the cart
+function emptyCart(){
+    cart=[]
+
+    saveToStorage();
+}
+
+
+export {cart, addToCart, removeFromCart, totalItems,updateCartQuantity, emptyCart};
