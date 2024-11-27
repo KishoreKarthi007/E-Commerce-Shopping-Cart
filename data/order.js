@@ -14,15 +14,9 @@ if (!order) {
                     deliveryId: "1",
                     quantity: 3,
                     orderArrivalDate: "August 15",
-                },
-                {
-                    productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
-                    deliveryId: "3",
-                    quantity: 3,
-                    orderArrivalDate: "August 12",
-                },
+                }
             ],
-            totalPrice: 21159.5,
+            totalPrice: 3302.7,
             orderPlacedDate: "August 12",
         }
     ];
@@ -56,7 +50,6 @@ function addToOrder(productPush, totalPrice) {
 
     saveToStorage(order); // Save updated order to localStorage
 }
-
 
 
 // Export order array and function

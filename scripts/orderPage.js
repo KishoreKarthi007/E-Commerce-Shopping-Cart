@@ -2,11 +2,6 @@ import { cart, removeFromCart, totalItems, updateCartQuantity,emptyCart } from "
 import {order,addToOrder} from "../data/order.js";
 import { products } from "../data/products.js";
 
-
-
-console.log("CART IN orderPage.js: ",cart);
-console.log("ORDER IN orderPage.js: ",order);
-
 //Generating the Order Container HTML
 let orderContainerHTML=``;
 order.forEach((orderItem)=>{
@@ -65,7 +60,7 @@ order.forEach((orderItem)=>{
 
             <div class="product-actions">
               <a href="tracking.html">
-                <button class="track-package-button button-secondary">
+                <button class="track-package-button button-secondary js-track-package" data-order-id="${orderItem.orderId}" data-product-id="${matchingItem.id}">
                   Track package
                 </button>
               </a>
@@ -79,8 +74,17 @@ order.forEach((orderItem)=>{
     </div>
     `
 });
-
-
 document.querySelector(".js-orders-html")
 .innerHTML=orderContainerHTML;
+
+//Interactive Tracking Button
+document.querySelectorAll(".js-track-package")
+  .forEach(button => {
+      button.addEventListener('click',()=>{
+        const productId=button.dataset.productId;
+        const orderId=button.dataset.orderId;
+        localStorage.setItem('trackingOrderId', orderId);
+        localStorage.setItem('trackingProductId', productId);
+      });        
+  });
 
