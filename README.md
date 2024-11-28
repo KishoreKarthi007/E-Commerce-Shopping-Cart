@@ -38,7 +38,9 @@ Welcome to the official repository for the **E-Commerce Shopping Cart** project,
 - **UUID**: For generating unique identifiers for orders and products.  
 
 ### **Development Environment**  
-- **Visual Studio Code (VS Code)**  
+- **Visual Studio Code (VS Code)** - Development environment. 
+- **Git**: Used for version control to manage the project's source code efficiently.  
+- **GitHub**: Hosted the project for collaboration and showcasing.   
 
 ## 🚀 Deployment  
 
